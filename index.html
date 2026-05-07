@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening ShodhPeeth...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid white;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .sub-message {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        .store-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .store-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <div class="message" id="mainMessage">Opening ShodhPeeth...</div>
+        <div class="sub-message" id="subMessage">Launching app</div>
+        <a href="#" id="storeLink" class="store-btn" style="display: none;">
+            Download App
+        </a>
+    </div>
+
+    <script>
+        const urlParams  = new URLSearchParams(window.location.search);
+        const type       = urlParams.get('type');   // 'test' or null
+        const id         = urlParams.get('id');     // categoryId (test) OR courseId (course)
+        const cid        = urlParams.get('cid');    // courseId (only for test links)
+
+        let customScheme = null;
+
+        if (type === 'test' && id) {
+            // Test series link
+            document.getElementById('mainMessage').textContent = 'Opening Test Series...';
+            customScheme = cid
+                ? `flutteredu://test?id=${id}&cid=${cid}`
+                : `flutteredu://test?id=${id}`;
+
+        } else if (id) {
+            // Course link (existing behaviour)
+            document.getElementById('mainMessage').textContent = 'Opening Course...';
+            customScheme = `flutteredu://course/${id}`;
+        }
+
+        if (customScheme) {
+            window.location.href = customScheme;
+
+            setTimeout(() => {
+                document.getElementById('subMessage').textContent =
+                    "App not installed? Download it now!";
+                document.getElementById('storeLink').style.display = 'inline-block';
+                document.getElementById('storeLink').href =
+                    'https://play.google.com/store/apps/details?id=org.indiandevelopers.sodhpeeth3';
+            }, 2000);
+        } else {
+            document.getElementById('mainMessage').textContent = 'Invalid Link';
+            document.getElementById('subMessage').textContent =
+                "This link is invalid or expired.";
+        }
+    </script>
+</body>
+</html>
